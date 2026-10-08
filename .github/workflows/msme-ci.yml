@@ -40,3 +40,6 @@ jobs:
       - name: Check backend syntax
         working-directory: msme-backend
         run: node --check server.js
+        
+      - name: Intentional test failure
+        run: exit 1
