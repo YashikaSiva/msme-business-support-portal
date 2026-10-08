@@ -1,0 +1,10 @@
+<div class="scheme-card">
+  <span class="authority-badge" [class.state]="scheme.authority === 'Tamil Nadu'">{{ scheme.authority }}</span>
+  <h3>{{ scheme.name }}</h3>
+  <p class="description">{{ scheme.description }}</p>
+  <p class="subsidy">{{ scheme.subsidyText }}</p>
+  <span class="match-chip" *ngIf="matchTag">{{ matchTag }}</span>
+  <div class="card-actions">
+    <a [routerLink]="['/schemes', scheme.id]" class="btn btn-secondary">View Details</a>
+  </div>
+</div>

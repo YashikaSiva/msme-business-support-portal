@@ -1,0 +1,64 @@
+<div class="checker-page">
+  <div class="form-panel">
+    <h1>Check Your Eligibility</h1>
+    <p class="subtext">Tell us about your business — we'll show which schemes you qualify for and exactly why.</p>
+
+    <form [formGroup]="form" (ngSubmit)="checkEligibility()">
+      <label>Business Type</label>
+      <select formControlName="businessType">
+        <option>Manufacturing</option>
+        <option>Service</option>
+        <option>Trading</option>
+      </select>
+
+      <label>Investment Amount (₹)</label>
+      <input type="number" formControlName="investment" placeholder="e.g. 500000" />
+      <p class="field-error" *ngIf="investment.touched && investment.hasError('required')">Investment amount is required.</p>
+      <p class="field-error" *ngIf="investment.touched && investment.hasError('min')">Investment must be greater than ₹0.</p>
+      <p class="field-error" *ngIf="investment.touched && investment.hasError('max')">That amount looks too large — please check.</p>
+
+      <label>Your Age</label>
+      <input type="number" formControlName="age" placeholder="e.g. 28" />
+      <p class="field-error" *ngIf="age.touched && age.hasError('required')">Age is required.</p>
+      <p class="field-error" *ngIf="age.touched && (age.hasError('min') || age.hasError('max'))">Enter a valid age between 18 and 100.</p>
+
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isFirstGen" /> I am a first-generation entrepreneur
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" formControlName="isWomenOwned" /> This is a women-owned business
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-block">Check Eligible Schemes</button>
+    </form>
+  </div>
+
+  <div class="results-panel" *ngIf="submitted">
+    <h2>You qualify for {{ fullMatches.length }} scheme(s)</h2>
+
+    <div class="results-grid" *ngIf="fullMatches.length > 0; else noMatches">
+      <div class="result-block" *ngFor="let r of fullMatches">
+        <app-scheme-card [scheme]="r.scheme" matchTag="Full match"></app-scheme-card>
+        <details class="why-panel">
+          <summary>Why this matches</summary>
+          <ul>
+            <li *ngFor="let c of r.matchedCriteria">✅ {{ c }}</li>
+          </ul>
+        </details>
+      </div>
+    </div>
+    <ng-template #noMatches>
+      <p class="empty-note">No full matches yet — check the close matches below to see what you're missing.</p>
+    </ng-template>
+
+    <div class="close-matches" *ngIf="closeMatches.length > 0">
+      <h3>Close Matches</h3>
+      <div class="results-grid">
+        <div class="result-block" *ngFor="let r of closeMatches">
+          <app-scheme-card [scheme]="r.scheme"></app-scheme-card>
+          <p class="missing-note">Missing: {{ r.missingCriteria[0] }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

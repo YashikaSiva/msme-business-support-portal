@@ -1,0 +1,78 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="step-indicator">
+      <span [class.active]="step === 1">1. Account</span>
+      <span [class.active]="step === 2">2. Business Basics</span>
+    </div>
+
+    <form [formGroup]="accountForm" (ngSubmit)="goToStep2()" *ngIf="step === 1">
+      <label>Name</label>
+      <input type="text" formControlName="name" />
+      <p class="field-error" *ngIf="name.touched && name.hasError('required')">Name is required.</p>
+
+      <label>Email</label>
+      <input type="email" formControlName="email" />
+      <p class="field-error" *ngIf="email.touched && email.hasError('required')">Email is required.</p>
+      <p class="field-error" *ngIf="email.touched && email.hasError('email')">Enter a valid email address.</p>
+
+      <label>Phone</label>
+      <input type="tel" formControlName="phone" placeholder="10-digit mobile number" />
+      <p class="field-error" *ngIf="phone.touched && phone.hasError('required')">Phone number is required.</p>
+      <p class="field-error" *ngIf="phone.touched && phone.hasError('pattern')">Enter a valid 10-digit Indian mobile number.</p>
+
+      <label>Password</label>
+      <input type="password" formControlName="password" />
+      <p class="field-error" *ngIf="password.touched && password.hasError('required')">Password is required.</p>
+      <p class="field-error" *ngIf="password.touched && password.hasError('minlength')">Password must be at least 6 characters.</p>
+
+      <label>Confirm Password</label>
+      <input type="password" formControlName="confirmPassword" />
+      <p class="field-error" *ngIf="confirmPassword.touched && accountForm.hasError('mismatch')">Passwords do not match.</p>
+
+      <button type="submit" class="btn btn-primary btn-block">Continue</button>
+    </form>
+
+    <form [formGroup]="businessForm" (ngSubmit)="onSubmit()" *ngIf="step === 2">
+      <label>Business Name</label>
+      <input type="text" formControlName="businessName" />
+      <p class="field-error" *ngIf="businessName.touched && businessName.hasError('required')">Business name is required.</p>
+
+      <label>Business Type</label>
+      <select formControlName="businessType">
+        <option>Manufacturing</option>
+        <option>Service</option>
+        <option>Trading</option>
+      </select>
+
+      <label>Sector</label>
+      <input type="text" formControlName="sector" placeholder="e.g. Textiles, Food Processing" />
+
+      <label>District (Tamil Nadu)</label>
+      <input type="text" formControlName="district" />
+      <p class="field-error" *ngIf="district.touched && district.hasError('required')">District is required.</p>
+
+      <label>Business Age</label>
+      <select formControlName="businessAge">
+        <option>New</option>
+        <option>&lt;3 years</option>
+        <option>3-10 years</option>
+        <option>10+ years</option>
+      </select>
+
+      <label>Category (optional — used for subsidy matching)</label>
+      <select formControlName="category">
+        <option>General</option>
+        <option>Women-owned</option>
+        <option>SC/ST</option>
+        <option>Differently-abled</option>
+        <option>Transgender</option>
+      </select>
+
+      <p class="helper-note">We use this to show schemes relevant to you — you can update this anytime in your profile.</p>
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+    </form>
+
+    <p class="switch-auth">Already have an account? <a routerLink="/login">Login</a></p>
+  </div>
+</div>

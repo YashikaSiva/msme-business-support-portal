@@ -1,0 +1,34 @@
+:host { display: block; font-family: 'Inter', sans-serif; background: #f4f7fa; min-height: 100vh; }
+.applications-page { max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+.page-header h1 { color: #16232f; margin-bottom: 6px; }
+.subtext { font-size: 0.85rem; color: #5a6b7a; margin-bottom: 24px; }
+
+.add-tracker { display: flex; gap: 10px; background: #fff; padding: 16px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 24px; }
+.add-tracker select { flex: 1; padding: 9px 10px; border: 1px solid #d6dde3; border-radius: 8px; font-size: 0.9rem; }
+.btn-primary { background: #F2A93B; color: #1a1a1a; border: none; border-radius: 8px; padding: 9px 18px; font-weight: 600; cursor: pointer; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.tabs button { background: #fff; border: 1px solid #d6dde3; border-radius: 20px; padding: 6px 16px; font-size: 0.85rem; cursor: pointer; }
+.tabs button.active { background: #1E3A5F; color: #fff; border-color: #1E3A5F; }
+
+.app-list { display: flex; flex-direction: column; gap: 16px; }
+.app-card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.app-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.app-card-header h3 { color: #16232f; font-size: 1rem; }
+.stage-badge { font-size: 0.75rem; padding: 4px 12px; border-radius: 10px; background: #eef3f8; color: #1E3A5F; }
+.stage-badge[data-stage="Approved"] { background: #e8f5ee; color: #2E7D4F; }
+.stage-badge[data-stage="Rejected"] { background: #fbeaea; color: #c0392b; }
+.stage-badge[data-stage="Needs More Info"] { background: #fdf1de; color: #a86a10; }
+
+.stepper { display: flex; gap: 8px; margin-bottom: 16px; }
+.stepper-step { flex: 1; text-align: center; font-size: 0.7rem; padding: 6px 4px; border-radius: 6px; background: #eef0f2; color: #999; }
+.stepper-step.done { background: #1E3A5F; color: #fff; }
+
+.app-controls label { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; margin: 10px 0 6px; color: #333; }
+.edit-icon { font-size: 0.75rem; cursor: help; }
+.app-controls select, .app-controls input { width: 100%; padding: 8px 10px; border: 1px solid #d6dde3; border-radius: 8px; font-size: 0.85rem; box-sizing: border-box; }
+
+.empty-state { text-align: center; padding: 60px 20px; background: #fff; border-radius: 10px; }
+.empty-state p { color: #8fa0ad; margin-bottom: 16px; }
+.btn-secondary { display: inline-block; background: #fff; color: #1E3A5F; border: 1px solid #1E3A5F; border-radius: 8px; padding: 8px 18px; text-decoration: none; font-weight: 600; }

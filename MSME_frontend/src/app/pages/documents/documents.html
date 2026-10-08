@@ -1,0 +1,77 @@
+<div class="documents-page">
+  <div class="page-header">
+    <a routerLink="/dashboard" class="back-link">← Back to Dashboard</a>
+    <h1>Document Checklist</h1>
+    <p class="subtext">Keep track of the documents needed for each of your scheme applications.</p>
+  </div>
+
+  <div *ngIf="isLoading" class="empty-state"><p>Loading your applications…</p></div>
+
+  <div *ngIf="!isLoading && applications.length === 0" class="empty-state">
+    <p>You have no applications yet. Add a scheme to My Applications to start tracking its documents.</p>
+    <a routerLink="/schemes" class="btn-secondary">Browse Schemes</a>
+  </div>
+
+  <ng-container *ngIf="!isLoading && applications.length > 0">
+    <div class="card">
+      <label class="field-label">Application</label>
+      <select [(ngModel)]="selectedAppId" (ngModelChange)="loadDocuments()">
+        <option *ngFor="let a of applications" [value]="a.id">{{ a.schemeName }} — {{ a.stage }}</option>
+      </select>
+
+      <div class="readiness">
+        <div class="progress-bar"><div class="progress-fill" [style.width.%]="readinessPercent"></div></div>
+        <span>{{ readinessPercent }}% ready</span>
+      </div>
+    </div>
+
+    <p *ngIf="error" class="error-message">{{ error }}</p>
+
+    <div class="card">
+      <h2>Required documents</h2>
+      <ul class="checklist">
+        <li *ngFor="let t of requiredDocs" [class.done]="docFor(t)">
+          <span class="check">{{ docFor(t) ? '✔' : '○' }}</span>
+          <span class="doc-name">{{ t }}</span>
+          <ng-container *ngIf="docFor(t) as d; else missing">
+            <a [href]="d.fileUrl" target="_blank" rel="noopener" class="file-link">{{ d.fileName }}</a>
+            <span class="status" [attr.data-status]="d.status">{{ d.status }}</span>
+            <button type="button" class="link-btn danger" (click)="removeDocument(d)">Remove</button>
+          </ng-container>
+          <ng-template #missing>
+            <span class="status" data-status="missing">missing</span>
+            <button type="button" class="link-btn" [disabled]="isSaving" (click)="chooseFile(t)">
+              {{ isSaving ? 'Uploading...' : 'Add' }}
+            </button>
+          </ng-template>
+        </li>
+      </ul>
+      <p class="hint">Click <strong>Add</strong> to pick the file from your computer. Accepted: PDF, JPG, PNG, DOC, DOCX · max 5 MB</p>
+    </div>
+
+    <div class="card">
+      <h2>Other documents</h2>
+      <p class="hint">Need to add something else (e.g. Caste Certificate)? Choose the type, then pick the file from your computer.</p>
+      <div class="other-row">
+        <select #otherType>
+          <option value="Caste Certificate">Caste Certificate</option>
+          <option value="Other">Other</option>
+        </select>
+        <button class="btn-primary" type="button" [disabled]="isSaving" (click)="chooseFile($any(otherType.value))">
+          {{ isSaving ? 'Uploading...' : 'Choose file from computer' }}
+        </button>
+      </div>
+      <ul class="checklist" *ngIf="extraDocs.length">
+        <li *ngFor="let d of extraDocs" class="done">
+          <span class="check">✔</span>
+          <span class="doc-name">{{ d.documentType }}</span>
+          <a [href]="d.fileUrl" target="_blank" rel="noopener" class="file-link">{{ d.fileName }}</a>
+          <span class="status" [attr.data-status]="d.status">{{ d.status }}</span>
+          <button type="button" class="link-btn danger" (click)="removeDocument(d)">Remove</button>
+        </li>
+      </ul>
+    </div>
+
+    <input #fileInput type="file" hidden accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" (change)="onFileSelected($event)">
+  </ng-container>
+</div>

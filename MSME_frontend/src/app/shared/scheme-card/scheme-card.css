@@ -1,0 +1,37 @@
+:host { display: block; font-family: 'Inter', sans-serif; }
+.scheme-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+  box-sizing: border-box;
+}
+.authority-badge {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  background: #eef3f8;
+  color: #1E3A5F;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.authority-badge.state { background: #fdf1de; color: #a86a10; }
+h3 { color: #16232f; font-size: 1.05rem; margin: 4px 0; }
+.description { font-size: 0.85rem; color: #5a6b7a; flex-grow: 1; }
+.subsidy { font-size: 0.85rem; color: #2E7D4F; font-weight: 600; }
+.match-chip { font-size: 0.75rem; background: #e8f5ee; color: #2E7D4F; padding: 3px 10px; border-radius: 10px; align-self: flex-start; }
+.card-actions { margin-top: 8px; }
+.btn-secondary {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  border: 1px solid #1E3A5F;
+  color: #1E3A5F;
+  border-radius: 8px;
+  text-decoration: none;
+}
+.btn-secondary:hover { background: #1E3A5F; color: #fff; }
