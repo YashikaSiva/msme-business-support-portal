@@ -18,6 +18,7 @@ const applicationRoutes = require('./routes/applicationRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const documentRoutes = require('./routes/documentRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -60,6 +61,7 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 + error handling (must be last)
 app.use(notFound);

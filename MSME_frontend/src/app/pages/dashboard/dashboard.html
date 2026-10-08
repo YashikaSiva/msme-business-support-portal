@@ -7,6 +7,7 @@
       <a routerLink="/eligibility-checker">Eligibility Checker</a>
       <a routerLink="/applications">My Applications</a>
       <a routerLink="/profile">Profile</a>
+      <a *ngIf="user.role === 'admin'" routerLink="/admin">Admin Panel</a>
       <a href="javascript:void(0)" (click)="logout()">Logout</a>
     </nav>
   </aside>
