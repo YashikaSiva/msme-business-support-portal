@@ -37,7 +37,8 @@ export class Login {
     this.auth.login(this.email.value, this.password.value).subscribe((result) => {
       this.isSubmitting = false;
       if (result.success) {
-        this.router.navigate(['/dashboard']);
+        const isAdmin = this.auth.currentUser()?.role === 'admin';
+        this.router.navigate([isAdmin ? '/admin' : '/dashboard']);
       } else {
         this.errorMessage = result.message ?? 'Login failed.';
       }

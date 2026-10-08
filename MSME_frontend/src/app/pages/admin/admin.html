@@ -1,0 +1,254 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="wordmark">MSME Admin</div>
+    <nav>
+      @for (t of tabs; track t.id) {
+        <a href="javascript:void(0)" [class.active]="tab() === t.id" (click)="setTab(t.id)">
+          {{ t.label }}
+          @if (t.id === 'messages' && stats()?.messages?.newCount) { <span class="dot">{{ stats()?.messages?.newCount }}</span> }
+        </a>
+      }
+      <hr />
+      <a routerLink="/dashboard">User view</a>
+      <a href="javascript:void(0)" (click)="logout()">Logout</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <h1>{{ tabs.at(tabIndex())?.label }}</h1>
+      <span class="who">{{ me()?.name }} · admin</span>
+    </header>
+
+    @if (toast(); as t) { <div class="toast" [class.error]="t.error" role="status">{{ t.text }}</div> }
+    @if (loading()) { <p class="muted">Loading…</p> }
+
+    <!-- ============ OVERVIEW ============ -->
+    @if (tab() === 'overview' && stats(); as s) {
+      <section class="cards">
+        <div class="card"><span>Users</span><strong>{{ s.users.total }}</strong><small>{{ s.users.active }} active · {{ s.users.admins }} admin</small></div>
+        <div class="card"><span>Schemes</span><strong>{{ s.schemes.total }}</strong><small>{{ s.schemes.active }} visible</small></div>
+        <div class="card"><span>Applications</span><strong>{{ s.applications.total }}</strong><small>across all users</small></div>
+        <div class="card"><span>Messages</span><strong>{{ s.messages.total }}</strong><small>{{ s.messages.newCount }} new</small></div>
+      </section>
+
+      <section class="panel">
+        <h3>Applications by stage</h3>
+        @for (e of stageEntries(); track e.stage) {
+          <div class="bar-row">
+            <span class="bar-label">{{ e.stage }}</span>
+            <div class="bar"><div class="bar-fill" [style.width.%]="e.pct"></div></div>
+            <span class="bar-count">{{ e.count }}</span>
+          </div>
+        }
+      </section>
+
+      <div class="two-col">
+        <section class="panel">
+          <h3>Latest applications</h3>
+          @for (a of s.recentApplications; track a.id) {
+            <div class="row"><span>{{ a.schemeName }}<small>{{ a.userName }}</small></span><span class="badge" [attr.data-stage]="a.stage">{{ a.stage }}</span></div>
+          } @empty { <p class="muted">None yet.</p> }
+        </section>
+        <section class="panel">
+          <h3>New users</h3>
+          @for (u of s.recentUsers; track u.id) {
+            <div class="row"><span>{{ u.name }}<small>{{ u.email }}</small></span><small>{{ u.createdAt | date: 'd MMM y' }}</small></div>
+          } @empty { <p class="muted">None yet.</p> }
+        </section>
+      </div>
+    }
+
+    <!-- ============ SCHEMES ============ -->
+    @if (tab() === 'schemes') {
+      <div class="toolbar">
+        <input type="search" placeholder="Search schemes…" [value]="schemeSearch()" (input)="schemeSearch.set($any($event.target).value)" />
+        <button class="btn primary" (click)="openCreate()">+ Add scheme</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Authority</th><th>Category</th><th>Types</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            @for (s of filteredSchemes(); track s.id) {
+              <tr [class.dim]="!s.isActive">
+                <td><strong>{{ s.name }}</strong><small>{{ s.schemeId }}</small></td>
+                <td>{{ s.authority }}</td>
+                <td>{{ s.category }}</td>
+                <td>{{ s.businessTypes.join(', ') }}</td>
+                <td><span class="badge" [attr.data-on]="s.isActive">{{ s.isActive ? 'Visible' : 'Hidden' }}</span></td>
+                <td class="actions">
+                  <button class="btn" (click)="openEdit(s)">Edit</button>
+                  <button class="btn" (click)="toggleSchemeActive(s)">{{ s.isActive ? 'Hide' : 'Show' }}</button>
+                  <button class="btn danger" (click)="deleteScheme(s)">Delete</button>
+                </td>
+              </tr>
+            } @empty { <tr><td colspan="6" class="muted">No schemes found.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- ============ APPLICATIONS ============ -->
+    @if (tab() === 'applications') {
+      <div class="toolbar">
+        <input type="search" placeholder="Search by applicant email or scheme…" [value]="appSearch()"
+               (input)="appSearch.set($any($event.target).value)" (keyup.enter)="loadTab()" />
+        <select [value]="appStage()" (change)="appStage.set($any($event.target).value); loadTab()">
+          <option value="">All stages</option>
+          @for (st of stages; track st) { <option [value]="st">{{ st }}</option> }
+        </select>
+        <button class="btn" (click)="loadTab()">Search</button>
+      </div>
+      <p class="muted small">Changing a stage notifies the applicant.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Applicant</th><th>Scheme</th><th>Stage</th><th>Note</th><th>Updated</th></tr></thead>
+          <tbody>
+            @for (a of applications(); track a.id) {
+              <tr>
+                <td><strong>{{ a.userName }}</strong><small>{{ a.userEmail }}</small>@if (a.businessName) { <small>{{ a.businessName }}</small> }</td>
+                <td>{{ a.schemeName }}</td>
+                <td>
+                  <select class="stage-select" [attr.data-stage]="a.stage" [value]="a.stage" (change)="changeStage(a, $any($event.target).value)">
+                    @for (st of stages; track st) { <option [value]="st" [selected]="st === a.stage">{{ st }}</option> }
+                  </select>
+                </td>
+                <td class="note">{{ a.note || '—' }}</td>
+                <td>{{ a.updatedAt | date: 'd MMM y' }}</td>
+              </tr>
+            } @empty { <tr><td colspan="5" class="muted">No applications found.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- ============ USERS ============ -->
+    @if (tab() === 'users') {
+      <div class="toolbar">
+        <input type="search" placeholder="Search name, email, business…" [value]="userSearch()"
+               (input)="userSearch.set($any($event.target).value)" (keyup.enter)="loadTab()" />
+        <select [value]="userRole()" (change)="userRole.set($any($event.target).value); loadTab()">
+          <option value="">All roles</option>
+          <option value="user">Users</option>
+          <option value="admin">Admins</option>
+        </select>
+        <button class="btn" (click)="loadTab()">Search</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Business</th><th>Role</th><th>Status</th><th>Joined</th><th></th></tr></thead>
+          <tbody>
+            @for (u of users(); track u.id) {
+              <tr [class.dim]="!u.isActive">
+                <td><strong>{{ u.name }}</strong>@if (isSelf(u)) { <em> (you)</em> }<small>{{ u.email }}</small><small>{{ u.phone }}</small></td>
+                <td>{{ u.businessName || '—' }}<small>{{ u.businessType }} {{ u.district ? '· ' + u.district : '' }}</small></td>
+                <td><span class="badge" [attr.data-role]="u.role">{{ u.role }}</span></td>
+                <td><span class="badge" [attr.data-on]="u.isActive">{{ u.isActive ? 'Active' : 'Deactivated' }}</span></td>
+                <td>{{ u.createdAt | date: 'd MMM y' }}</td>
+                <td class="actions">
+                  <button class="btn" [disabled]="isSelf(u)" (click)="toggleRole(u)">{{ u.role === 'admin' ? 'Remove admin' : 'Make admin' }}</button>
+                  <button class="btn" [disabled]="isSelf(u)" (click)="toggleActive(u)">{{ u.isActive ? 'Deactivate' : 'Activate' }}</button>
+                  <button class="btn danger" [disabled]="isSelf(u)" (click)="deleteUser(u)">Delete</button>
+                </td>
+              </tr>
+            } @empty { <tr><td colspan="6" class="muted">No users found.</td></tr> }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- ============ MESSAGES ============ -->
+    @if (tab() === 'messages') {
+      <div class="toolbar">
+        <select [value]="msgStatus()" (change)="msgStatus.set($any($event.target).value); loadTab()">
+          <option value="">All messages</option>
+          <option value="new">New</option>
+          <option value="in-progress">In progress</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+
+      @for (m of messages(); track m.id) {
+        <article class="msg" [class.open]="expandedMsg() === m.id">
+          <div class="msg-head" (click)="toggleMsg(m)">
+            <div><strong>{{ m.subject }}</strong><small>{{ m.name }} · {{ m.email }} · {{ m.createdAt | date: 'd MMM y, h:mm a' }}</small></div>
+            <span class="badge" [attr.data-status]="m.status">{{ m.status }}</span>
+          </div>
+          @if (expandedMsg() === m.id) {
+            <p class="msg-body">{{ m.message }}</p>
+            @if (m.phone) { <small>Phone: {{ m.phone }}</small> }
+            <div class="actions">
+              <a class="btn" [href]="mailto(m)">Reply by email</a>
+              @if (m.status !== 'in-progress') { <button class="btn" (click)="setMsgStatus(m, 'in-progress')">Mark in progress</button> }
+              @if (m.status !== 'resolved') { <button class="btn" (click)="setMsgStatus(m, 'resolved')">Mark resolved</button> }
+              <button class="btn danger" (click)="deleteMessage(m)">Delete</button>
+            </div>
+          }
+        </article>
+      } @empty { <p class="muted">No messages.</p> }
+    }
+  </main>
+
+  <!-- ============ SCHEME EDITOR ============ -->
+  @if (editorOpen()) {
+    <div class="overlay" (click)="closeEditor()">
+      <form class="modal" [formGroup]="schemeForm" (ngSubmit)="saveScheme()" (click)="$event.stopPropagation()">
+        <h2>{{ editingId() ? 'Edit scheme' : 'Add scheme' }}</h2>
+
+        <div class="grid">
+          <label>Scheme ID (slug)
+            <input formControlName="schemeId" placeholder="e.g. stand-up-india" />
+            @if (schemeForm.controls.schemeId.touched && schemeForm.controls.schemeId.invalid) {
+              <span class="err">Lowercase letters, numbers and hyphens only.</span>
+            }
+          </label>
+          <label>Authority
+            <select formControlName="authority"><option>Central</option><option>Tamil Nadu</option></select>
+          </label>
+          <label class="full">Name
+            <input formControlName="name" maxlength="150" />
+            @if (schemeForm.controls.name.touched && schemeForm.controls.name.invalid) { <span class="err">Name is required.</span> }
+          </label>
+          <label class="full">Category
+            <input formControlName="category" maxlength="100" placeholder="e.g. Credit/Loan, Women Entrepreneurs" />
+            @if (schemeForm.controls.category.touched && schemeForm.controls.category.invalid) { <span class="err">Category is required.</span> }
+          </label>
+          <label class="full">Description
+            <textarea formControlName="description" rows="3" maxlength="2000"></textarea>
+            @if (schemeForm.controls.description.touched && schemeForm.controls.description.invalid) { <span class="err">Description is required.</span> }
+          </label>
+          <label class="full">Subsidy / benefit summary
+            <input formControlName="subsidyText" maxlength="300" />
+            @if (schemeForm.controls.subsidyText.touched && schemeForm.controls.subsidyText.invalid) { <span class="err">Subsidy text is required.</span> }
+          </label>
+          <label>Min age <input type="number" min="0" max="120" formControlName="minAge" /></label>
+          <label>Max age <input type="number" min="0" max="120" formControlName="maxAge" /></label>
+          <label>Min investment (₹) <input type="number" min="0" formControlName="minInvestment" /></label>
+          <label>Max investment (₹) <input type="number" min="0" formControlName="maxInvestment" /></label>
+        </div>
+
+        <fieldset>
+          <legend>Business types</legend>
+          @for (t of businessTypeOptions; track t) {
+            <label class="check"><input type="checkbox" [checked]="hasType(t)" (change)="toggleType(t)" /> {{ t }}</label>
+          }
+          @if (schemeForm.controls.businessTypes.touched && schemeForm.controls.businessTypes.invalid) {
+            <span class="err">Pick at least one.</span>
+          }
+        </fieldset>
+
+        <label class="check"><input type="checkbox" formControlName="isActive" /> Visible to applicants</label>
+
+        @if (formError()) { <p class="err block">{{ formError() }}</p> }
+
+        <div class="actions end">
+          <button type="button" class="btn" (click)="closeEditor()">Cancel</button>
+          <button type="submit" class="btn primary" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save scheme' }}</button>
+        </div>
+      </form>
+    </div>
+  }
+</div>

@@ -10,6 +10,8 @@ import { Documents } from './pages/documents/documents';
 import { MyApplications } from './pages/my-applications/my-applications';
 import { Contact } from './pages/contact/contact';
 import { Profile } from './pages/profile/profile';
+import { Admin } from './pages/admin/admin';
+import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -23,4 +25,5 @@ export const routes: Routes = [
   { path: 'documents', component: Documents },
   { path: 'profile', component: Profile },
   { path: 'contact', component: Contact },
+  { path: 'admin', component: Admin, canActivate: [adminGuard] },
 ];

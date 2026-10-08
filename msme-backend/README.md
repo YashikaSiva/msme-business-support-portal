@@ -133,6 +133,16 @@ or on error:
 | PUT | `/:id/status` | 🔒 Admin only — update status (`new`/`in-progress`/`resolved`) |
 | DELETE | `/:id` | 🔒 Admin only — delete a message |
 
+### Admin (`/api/admin`) — 🔒 admin role required for every route
+| Method | Route | Description |
+|---|---|---|
+| GET | `/stats` | Totals for users, schemes, applications (by stage), messages + recent activity |
+| GET | `/users` | List users (`?search=&role=&page=&limit=`) |
+| PUT | `/users/:id/access` | Change `{ role?, isActive? }` (cannot target yourself) |
+| DELETE | `/users/:id` | Delete a user and their applications (cannot target yourself) |
+| GET | `/applications` | All applications with applicant details (`?stage=&search=`) |
+| GET | `/schemes` | All schemes, including hidden (`isActive: false`) ones |
+
 ### Documents (`/api/documents`) — 🔒 all require login
 | Method | Route | Description |
 |---|---|---|
@@ -177,7 +187,7 @@ msme-backend/
 
 ## 7. Notes
 
-- The first registered admin must be created manually: register a normal user, then in `mongosh` or
-  MongoDB Compass set `role: "admin"` on that user document.
+- Create the first admin with `npm run create-admin -- "Admin Name" admin@example.com 9876543210 "StrongPassword"`
+  (promotes the account if the email already exists). Then log in at the Angular app — admins are sent to `/admin`.
 - CORS is restricted to `CLIENT_ORIGIN` (defaults to the Angular dev server, `http://localhost:4200`).
 - Passwords are hashed with bcrypt (10 salt rounds) and never returned in API responses.

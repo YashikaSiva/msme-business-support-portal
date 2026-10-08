@@ -30,6 +30,7 @@ const updateSchemeValidator = [
   body('maxInvestment').optional().isFloat({ min: 0 }),
   body('businessTypes').optional().isArray({ min: 1 }),
   body('businessTypes.*').optional().isIn(['Manufacturing', 'Service', 'Trading']),
+  body('isActive').optional().isBoolean().withMessage('isActive must be true or false'),
 ];
 
 const idParamValidator = [param('id').isMongoId().withMessage('Invalid scheme id')];
