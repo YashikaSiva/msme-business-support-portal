@@ -1,0 +1,62 @@
+<div class="dashboard-layout" *ngIf="user">
+  <aside class="sidebar">
+    <div class="wordmark">MSME Scheme Assistant</div>
+    <nav>
+      <a routerLink="/dashboard" class="active">Dashboard</a>
+      <a routerLink="/schemes">Browse Schemes</a>
+      <a routerLink="/eligibility-checker">Eligibility Checker</a>
+      <a routerLink="/applications">My Applications</a>
+      <a routerLink="/profile">Profile</a>
+      <a *ngIf="user.role === 'admin'" routerLink="/admin">Admin Panel</a>
+      <a href="javascript:void(0)" (click)="logout()">Logout</a>
+    </nav>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="welcome-strip">
+      <h2>Welcome back, {{ user.name }}</h2>
+      <span class="chip">{{ user.businessType }} · {{ user.district }}</span>
+      <a routerLink="/profile" class="edit-link">Edit business profile</a>
+    </div>
+
+    <section>
+      <h3>Top Matches</h3>
+      <div class="match-row">
+        <div class="match-card" *ngFor="let m of matches">
+          <span class="authority-badge" [class.state]="m.scheme.authority === 'Tamil Nadu'">{{ m.scheme.authority }}</span>
+          <h4>{{ m.scheme.name }}</h4>
+          <p class="match-tag">Matches {{ m.matchedCriteria.length }}/{{ m.totalCriteria }} criteria</p>
+          <p class="subsidy">{{ m.scheme.subsidyText }}</p>
+          <a [routerLink]="['/schemes', m.scheme.id]" class="btn btn-secondary">View Details</a>
+        </div>
+        <p *ngIf="matches.length === 0" class="empty-note">Complete your business profile to see matched schemes.</p>
+      </div>
+    </section>
+
+    <section class="widget-row">
+      <div class="widget">
+        <h3>Document Readiness</h3>
+        <select *ngIf="applications.length > 1" class="app-select"
+                [value]="readinessAppId" (change)="onReadinessAppChange($any($event.target).value)">
+          <option *ngFor="let a of applications" [value]="a.id" [selected]="a.id === readinessAppId">{{ a.schemeName }}</option>
+        </select>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width.%]="readinessPercent"></div>
+        </div>
+        <p>{{ readinessPercent }}% ready</p>
+        <p *ngIf="applications.length === 0" class="empty-note">Start tracking a scheme to build your document checklist.</p>
+        <a routerLink="/documents" class="link">Complete my documents</a>
+      </div>
+
+      <div class="widget">
+        <h3>Active Applications</h3>
+        <div class="app-row" *ngFor="let a of applications">
+          <span>{{ a.schemeName }}</span>
+          <span class="stage-badge">{{ a.stage }}</span>
+        </div>
+        <p *ngIf="applications.length === 0" class="empty-note">No applications yet.</p>
+        <a routerLink="/applications" class="link">View all</a>
+      </div>
+    </section>
+  </main>
+</div>

@@ -1,0 +1,25 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <h2>Log in to your account</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <label>Email</label>
+      <input type="email" formControlName="email" />
+      <p class="field-error" *ngIf="email.touched && email.hasError('required')">Email is required.</p>
+      <p class="field-error" *ngIf="email.touched && email.hasError('email')">Enter a valid email address.</p>
+
+      <label>Password</label>
+      <input type="password" formControlName="password" />
+      <p class="field-error" *ngIf="password.touched && password.hasError('required')">Password is required.</p>
+      <p class="field-error" *ngIf="password.touched && password.hasError('minlength')">Password must be at least 6 characters.</p>
+
+      <a class="forgot-link" href="#">Forgot password?</a>
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+      <button type="submit" class="btn btn-primary btn-block">Login</button>
+    </form>
+    <div class="divider">or</div>
+    <p class="switch-auth">Don't have an account? <a routerLink="/register">Register</a></p>
+    <p class="trust-note">Your data is used only to match you with relevant schemes.</p>
+  </div>
+</div>

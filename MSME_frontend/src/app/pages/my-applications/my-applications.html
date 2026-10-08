@@ -1,0 +1,61 @@
+<div class="applications-page">
+  <div class="page-header">
+    <h1>My Applications</h1>
+    <p class="subtext">You update these yourself after checking your application on the official portal — this is your own tracker, not a live government feed.</p>
+  </div>
+
+  <form class="add-tracker" [formGroup]="trackerForm" (ngSubmit)="startTracking()">
+    <div class="add-tracker-row">
+      <select formControlName="schemeId">
+        <option value="">-- Select a scheme to start tracking --</option>
+        <option *ngFor="let s of allSchemes" [value]="s.id">{{ s.name }}</option>
+      </select>
+      <button type="submit" class="btn btn-primary">Start Tracking</button>
+    </div>
+    <p class="field-error" *ngIf="schemeId.touched && schemeId.hasError('required')">Please select a scheme first.</p>
+    <p class="field-error" *ngIf="duplicateError">{{ duplicateError }}</p>
+  </form>
+
+  <div class="tabs">
+    <button [class.active]="activeTab === 'All'" (click)="activeTab = 'All'">All</button>
+    <button [class.active]="activeTab === 'Preparing'" (click)="activeTab = 'Preparing'">Preparing</button>
+    <button [class.active]="activeTab === 'Submitted'" (click)="activeTab = 'Submitted'">Submitted</button>
+    <button [class.active]="activeTab === 'Decided'" (click)="activeTab = 'Decided'">Decided</button>
+  </div>
+
+  <div class="app-list" *ngIf="filteredApplications.length > 0; else emptyState">
+    <div class="app-card" *ngFor="let app of filteredApplications">
+      <div class="app-card-header">
+        <h3>{{ app.schemeName }}</h3>
+        <span class="stage-badge" [attr.data-stage]="app.stage">{{ app.stage }}</span>
+      </div>
+
+      <div class="stepper">
+        <div class="stepper-step" [class.done]="stepIndex(app.stage) >= 0">Preparing</div>
+        <div class="stepper-step" [class.done]="stepIndex(app.stage) >= 1">Submitted</div>
+        <div class="stepper-step" [class.done]="stepIndex(app.stage) >= 2">Waiting</div>
+        <div class="stepper-step" [class.done]="stepIndex(app.stage) >= 3">Decision</div>
+      </div>
+
+      <div class="app-controls">
+        <label>
+          Update status
+          <span class="edit-icon" title="You update this yourself based on the official portal">✏️</span>
+        </label>
+        <select [ngModel]="app.stage" (ngModelChange)="updateStage(app, $event)">
+          <option *ngFor="let s of stageOptions" [value]="s">{{ s }}</option>
+        </select>
+
+        <label>Your note (e.g. portal reference number)</label>
+        <input type="text" [ngModel]="app.note" (ngModelChange)="updateNote(app, $event)" maxlength="200" placeholder="e.g. Applied 14 July, ref #4521" />
+      </div>
+    </div>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <p>No applications yet — browse schemes to get started.</p>
+      <a routerLink="/schemes" class="btn btn-secondary">Browse Schemes</a>
+    </div>
+  </ng-template>
+</div>

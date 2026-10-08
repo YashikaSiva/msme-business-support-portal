@@ -1,0 +1,24 @@
+<button class="chat-fab" (click)="toggle()" aria-label="Open assistant chat">💬</button>
+
+<div class="chat-drawer" *ngIf="isOpen">
+  <div class="chat-header">
+    <span>Scheme Assistant</span>
+    <button class="close-btn" (click)="toggle()">✕</button>
+  </div>
+  <p class="chat-note">Ask about eligibility, documents, or how to apply — I only answer using our scheme database.</p>
+
+  <div class="chat-thread">
+    <div class="chat-bubble" [class.user]="m.from === 'user'" *ngFor="let m of messages">
+      {{ m.text }}
+    </div>
+  </div>
+
+  <div class="quick-replies" *ngIf="messages.length === 1">
+    <button *ngFor="let q of quickReplies" (click)="send(q)">{{ q }}</button>
+  </div>
+
+  <div class="chat-input-row">
+    <input type="text" [(ngModel)]="draft" placeholder="Ask a question..." (keyup.enter)="send()" />
+    <button class="send-btn" (click)="send()">➤</button>
+  </div>
+</div>

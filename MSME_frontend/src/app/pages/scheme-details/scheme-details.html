@@ -1,0 +1,49 @@
+<div class="loading-state" *ngIf="isLoading">
+  <p>Loading scheme…</p>
+</div>
+
+<div class="details-page" *ngIf="!isLoading && scheme">
+  <div class="header-block">
+    <span class="authority-badge" [class.state]="scheme.authority === 'Tamil Nadu'">{{ scheme.authority }}</span>
+    <h1>{{ scheme.name }}</h1>
+    <p class="tagline">{{ scheme.description }}</p>
+    <div class="cta-row">
+      <a routerLink="/eligibility-checker" class="btn btn-primary">Check if I'm Eligible</a>
+      <a routerLink="/schemes" class="btn btn-secondary">Back to Schemes</a>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><span class="stat-label">Subsidy / Loan</span><span class="stat-value">{{ scheme.subsidyText }}</span></div>
+    <div class="stat-card"><span class="stat-label">Category</span><span class="stat-value">{{ scheme.category }}</span></div>
+    <div class="stat-card" *ngIf="scheme.minAge"><span class="stat-label">Age Eligibility</span><span class="stat-value">{{ scheme.minAge }}{{ scheme.maxAge ? ' – ' + scheme.maxAge : '+' }} years</span></div>
+    <div class="stat-card" *ngIf="scheme.maxInvestment"><span class="stat-label">Investment Range</span><span class="stat-value">₹{{ scheme.minInvestment | number }} – ₹{{ scheme.maxInvestment | number }}</span></div>
+  </div>
+
+  <section>
+    <h2>About this Scheme</h2>
+    <p class="about-text">{{ scheme.description }}</p>
+  </section>
+
+  <section>
+    <h2>Eligible Business Types</h2>
+    <div class="tag-row">
+      <span class="tag" *ngFor="let t of scheme.businessTypes">{{ t }}</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>How to Apply</h2>
+    <ol class="steps-list">
+      <li>Complete your business profile and confirm eligibility on our Eligibility Checker.</li>
+      <li>Prepare required documents using our Document Checklist.</li>
+      <li>Submit your application on the official government portal.</li>
+      <li>Track your progress in My Applications.</li>
+    </ol>
+  </section>
+</div>
+
+<div class="not-found" *ngIf="!isLoading && !scheme">
+  <p>{{ loadError || 'Scheme not found.' }}</p>
+  <a routerLink="/schemes">Back to Browse Schemes</a>
+</div>

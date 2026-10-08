@@ -1,0 +1,17 @@
+<div class="filter-panel">
+  <label>Search</label>
+  <input type="text" [(ngModel)]="search" (ngModelChange)="emit()" placeholder="Search schemes..." />
+
+  <label>Authority</label>
+  <select [(ngModel)]="authority" (ngModelChange)="emit()">
+    <option value="">All</option>
+    <option value="Central">Central</option>
+    <option value="Tamil Nadu">Tamil Nadu</option>
+  </select>
+
+  <label>Category</label>
+  <select [(ngModel)]="category" (ngModelChange)="emit()">
+    <option value="">All</option>
+    <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+  </select>
+</div>

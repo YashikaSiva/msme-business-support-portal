@@ -1,0 +1,81 @@
+<header class="site-header">
+  <div class="top-bar">
+    <span>Helpline: 1800-180-6763</span>
+  </div>
+  <div class="main-nav">
+    <div class="wordmark">MSME Scheme Assistant</div>
+    <nav class="nav-links">
+      <a routerLink="/schemes">Browse Schemes</a>
+      <a routerLink="/eligibility-checker">Eligibility Checker</a>
+      <a href="#about">About</a>
+      <a routerLink="/contact">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a routerLink="/login" class="btn btn-ghost">Login</a>
+      <a routerLink="/register" class="btn btn-primary">Register Business</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>100+ government schemes exist for your business. Finding the right one shouldn't be the hard part.</h1>
+    <p class="hero-sub">Discover, understand, and prepare for central and Tamil Nadu MSME schemes — all in one place.</p>
+    <div class="hero-ctas">
+      <a routerLink="/eligibility-checker" class="btn btn-primary btn-lg">Check My Eligibility</a>
+      <a routerLink="/schemes" class="btn btn-secondary btn-lg">Browse All Schemes</a>
+    </div>
+    <div class="stat-strip">
+      <span class="stat-highlight">10,000+</span> MSMEs in Tamil Nadu could claim unused subsidies
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Tell us about your business</h3>
+        <p>Business type, sector, turnover, and location.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>See schemes you qualify for</h3>
+        <p>Ranked, explained, and compared side-by-side.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Prepare documents & track application</h3>
+        <p>Checklist your paperwork, then apply on the official portal.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="categories">
+    <h2>Explore by Category</h2>
+    <div class="category-grid">
+      <div class="category-card" *ngFor="let cat of categories">
+        <div class="category-icon">{{ cat.icon }}</div>
+        <h3>{{ cat.name }}</h3>
+        <p>{{ cat.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust-strip">
+    <h2>Covers real central & Tamil Nadu schemes</h2>
+    <div class="badges">
+      <span class="badge" *ngFor="let badge of trustBadges">{{ badge }}</span>
+    </div>
+  </section>
+</main>
+
+
+<footer class="site-footer">
+  <div class="footer-links">
+    <a routerLink="/schemes">Browse Schemes</a>
+    <a routerLink="/eligibility-checker">Eligibility Checker</a>
+    <a routerLink="/contact">Contact</a>
+  </div>
+  <p class="disclaimer">MSME Scheme Assistant is an independent facilitation tool built for educational purposes. It is not an official government portal.</p>
+</footer>

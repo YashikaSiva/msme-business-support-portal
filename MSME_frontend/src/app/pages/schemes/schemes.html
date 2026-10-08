@@ -1,0 +1,92 @@
+<div class="browse-layout">
+  <aside class="filter-sidebar">
+    <app-filter-panel (filtersChanged)="onFiltersChanged($event)"></app-filter-panel>
+  </aside>
+
+  <main class="results-area">
+    <div class="results-header">
+      <span>{{ filtered.length }} schemes found</span>
+      <button *ngIf="isAdmin" class="btn btn-primary" type="button" (click)="startCreate()">+ Add Scheme</button>
+    </div>
+
+    <div *ngIf="isAdmin" class="admin-panel">
+      <h2>{{ editingId ? 'Edit Scheme' : 'Add New Scheme' }}</h2>
+
+      <div class="form-grid">
+        <label>Scheme ID *
+          <input [(ngModel)]="form.schemeId" [disabled]="!!editingId" placeholder="e.g. pmegp">
+        </label>
+        <label>Name *
+          <input [(ngModel)]="form.name" placeholder="Scheme name">
+        </label>
+        <label>Authority *
+          <select [(ngModel)]="form.authority">
+            <option value="Central">Central</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+          </select>
+        </label>
+        <label>Category *
+          <input [(ngModel)]="form.category" placeholder="Credit/Loan">
+        </label>
+        <label>Minimum Age
+          <input type="number" [(ngModel)]="form.minAge">
+        </label>
+        <label>Maximum Age
+          <input type="number" [(ngModel)]="form.maxAge">
+        </label>
+        <label>Minimum Investment
+          <input type="number" [(ngModel)]="form.minInvestment">
+        </label>
+        <label>Maximum Investment
+          <input type="number" [(ngModel)]="form.maxInvestment">
+        </label>
+        <label class="wide">Description *
+          <textarea [(ngModel)]="form.description" rows="3"></textarea>
+        </label>
+        <label class="wide">Subsidy / Loan Text *
+          <input [(ngModel)]="form.subsidyText">
+        </label>
+        <label class="wide">Business Types *
+          <select multiple [(ngModel)]="form.businessTypes">
+            <option value="Manufacturing">Manufacturing</option>
+            <option value="Service">Service</option>
+            <option value="Trading">Trading</option>
+          </select>
+        </label>
+      </div>
+
+      <p *ngIf="actionError" class="error-message">{{ actionError }}</p>
+      <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+
+      <div class="admin-actions">
+        <button class="btn btn-primary" type="button" [disabled]="isSaving" (click)="saveScheme()">
+          {{ isSaving ? 'Saving...' : (editingId ? 'Update Scheme' : 'Create Scheme') }}
+        </button>
+        <button class="btn btn-secondary" type="button" (click)="cancelEdit()">Clear</button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+      <p>Loading schemes...</p>
+    </div>
+
+    <div *ngIf="!isLoading && loadError" class="error-state">
+      <p>{{ loadError }}</p>
+      <button class="btn btn-primary" type="button" (click)="loadSchemes()">Retry</button>
+    </div>
+
+    <div *ngIf="!isLoading && !loadError" class="results-grid">
+      <div *ngFor="let scheme of filtered" class="scheme-wrapper">
+        <app-scheme-card [scheme]="scheme"></app-scheme-card>
+        <div *ngIf="isAdmin" class="admin-card-actions">
+          <button class="btn btn-secondary" type="button" (click)="startEdit(scheme)">Edit</button>
+          <button class="btn btn-danger" type="button" (click)="deleteScheme(scheme)">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="!isLoading && !loadError && filtered.length === 0" class="empty-note">
+      No schemes match your filters.
+    </p>
+  </main>
+</div>

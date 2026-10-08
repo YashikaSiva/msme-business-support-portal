@@ -1,0 +1,95 @@
+<div class="profile-page" *ngIf="user() as u">
+  <a routerLink="/dashboard" class="back-link">← Back to Dashboard</a>
+  <div class="title-row">
+    <h1>My Profile</h1>
+    <button *ngIf="!editing()" type="button" class="btn-primary" (click)="startEdit()">Edit profile</button>
+  </div>
+  <p class="subtext">The details you provided when you registered.</p>
+
+  <p *ngIf="message()" class="success-message">{{ message() }}</p>
+  <p *ngIf="error()" class="error-message">{{ error() }}</p>
+
+  <ng-container *ngIf="!editing(); else editForm">
+    <div class="card">
+      <h2>Account</h2>
+      <dl>
+        <div><dt>Name</dt><dd>{{ u.name }}</dd></div>
+        <div><dt>Email</dt><dd>{{ u.email }}</dd></div>
+        <div><dt>Phone</dt><dd>{{ u.phone }}</dd></div>
+      </dl>
+    </div>
+
+    <div class="card">
+      <h2>Business</h2>
+      <dl>
+        <div><dt>Business Name</dt><dd>{{ u.businessName || '—' }}</dd></div>
+        <div><dt>Business Type</dt><dd>{{ u.businessType || '—' }}</dd></div>
+        <div><dt>Sector</dt><dd>{{ u.sector || '—' }}</dd></div>
+        <div><dt>State</dt><dd>{{ u.state || '—' }}</dd></div>
+        <div><dt>District</dt><dd>{{ u.district || '—' }}</dd></div>
+        <div><dt>Business Age</dt><dd>{{ u.businessAge || '—' }}</dd></div>
+        <div><dt>Category</dt><dd>{{ u.category || '—' }}</dd></div>
+      </dl>
+    </div>
+  </ng-container>
+
+  <ng-template #editForm>
+    <form class="card" [formGroup]="form" (ngSubmit)="save()">
+      <div class="form-grid">
+        <label>Name
+          <input type="text" formControlName="name" />
+          <span class="field-error" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">Enter your name.</span>
+        </label>
+        <label>Email
+          <input type="email" [value]="u.email" disabled />
+        </label>
+        <label>Phone
+          <input type="tel" formControlName="phone" />
+          <span class="field-error" *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid">Enter a valid 10-digit mobile number.</span>
+        </label>
+        <label>Business Name
+          <input type="text" formControlName="businessName" />
+          <span class="field-error" *ngIf="form.get('businessName')?.touched && form.get('businessName')?.invalid">Business name is required.</span>
+        </label>
+        <label>Business Type
+          <select formControlName="businessType">
+            <option>Manufacturing</option>
+            <option>Service</option>
+            <option>Trading</option>
+          </select>
+        </label>
+        <label>Sector
+          <input type="text" formControlName="sector" />
+        </label>
+        <label>State
+          <input type="text" formControlName="state" />
+        </label>
+        <label>District
+          <input type="text" formControlName="district" />
+          <span class="field-error" *ngIf="form.get('district')?.touched && form.get('district')?.invalid">District is required.</span>
+        </label>
+        <label>Business Age
+          <select formControlName="businessAge">
+            <option>New</option>
+            <option>&lt;3 years</option>
+            <option>3-10 years</option>
+            <option>10+ years</option>
+          </select>
+        </label>
+        <label>Category
+          <select formControlName="category">
+            <option>General</option>
+            <option>Women-owned</option>
+            <option>SC/ST</option>
+            <option>Differently-abled</option>
+            <option>Transgender</option>
+          </select>
+        </label>
+      </div>
+      <div class="actions">
+        <button type="submit" class="btn-primary" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save changes' }}</button>
+        <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </form>
+  </ng-template>
+</div>
